@@ -14,12 +14,14 @@ class HomeModel extends Query{
             $res = 'ok';
         }else{
             $res = 'error';
+            error_log("Resultado del registro: " . $res);
+
         }
-        return $this->save($sql, [$title, $inicio, $color, $usuario_id]);
+        return $res;
     }
     public function getEventos($usuario_id) {
         $sql = "SELECT * FROM evento WHERE usuario_id = ?";
-        return $this->selectAll($sql, [$usuario_id]);
+        return $this->selectAll($sql, [$usuario_id]); // Corrige esta línea para pasar los parámetros
     }
     
     public function modificar($title, $inicio, $color, $id)

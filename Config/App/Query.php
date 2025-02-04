@@ -19,14 +19,22 @@ class Query extends Conexion{
         return $resul->fetch(PDO::FETCH_ASSOC);
     }
     
-    public function selectAll(string $sql)
+    public function selectAll(string $sql, array $params = [])
     {
         $this->sql = $sql;
         $resul = $this->con->prepare($this->sql);
-        $resul->execute($params);
+        
+        // Si hay parámetros, los pasamos a la consulta
+        if (!empty($params)) {
+            $resul->execute($params);
+        } else {
+            $resul->execute();
+        }
+    
         $data = $resul->fetchAll(PDO::FETCH_ASSOC);
         return $data;
     }
+    
     public function save(string $sql, array $datos)
     {
         $this->sql = $sql;

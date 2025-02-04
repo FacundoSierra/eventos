@@ -58,10 +58,10 @@ document.addEventListener('DOMContentLoaded', function () {
             window.location.href = base_url + 'Auth/logout';
         });
     }
-
+    let calendar;
     // Initialize the calendar
     if (calendarEl) {
-        let calendar = new FullCalendar.Calendar(calendarEl, {
+        calendar = new FullCalendar.Calendar(calendarEl, {
             timeZone: 'local',
             initialView: 'dayGridMonth',
             locale: 'es',
@@ -72,6 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             events: base_url + 'Home/listar',
             editable: true,
+            selectable: true,
             dateClick: function (info) {
                 if (!frm || !myModal) return;
                 frm.reset();
@@ -108,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 http.onreadystatechange = function () {
                     if (this.readyState == 4 && this.status == 200) {
                         const res = JSON.parse(this.responseText);
-                        Swal.fire('Avisos?', res.msg, res.tipo);
+                        Swal.fire('', res.msg, res.tipo);
                         if (res.estado) {
                             if (myModal) myModal.hide();
                             calendar.refetchEvents();
@@ -128,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const title = document.getElementById('title').value;
             const start = document.getElementById('start').value;
             if (title === '' || start === '') {
-                Swal.fire('Avisos?', 'Todos los campos son obligatorios', 'warning');
+                Swal.fire('Advertencia', 'Todos los campos son obligatorios', 'warning');
             } else {
                 const url = base_url + 'Home/registrar';
                 const http = new XMLHttpRequest();
@@ -138,9 +139,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (this.readyState == 4 && this.status == 200) {
                         const res = JSON.parse(this.responseText);
                         if (!res.estado) {
-                            Swal.fire('Error', 'No se pudo procesar la solicitud.', 'error');
+                            Swal.fire('Error', res.msg || 'No se pudo procesar la solicitud.', 'error');
                         } else {
-                            Swal.fire('Avisos?', res.msg, res.tipo);
+                            Swal.fire('', res.msg, res.tipo);
                         }
                         if (res.estado) {
                             if (myModal) myModal.hide();
@@ -158,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!myModal) return;
             myModal.hide();
             Swal.fire({
-                title: 'Advertencia?',
+                title: '',
                 text: '¿Está seguro de eliminar?',
                 icon: 'warning',
                 showCancelButton: true,
@@ -174,7 +175,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     http.onreadystatechange = function () {
                         if (this.readyState == 4 && this.status == 200) {
                             const res = JSON.parse(this.responseText);
-                            Swal.fire('Avisos?', res.msg, res.tipo);
+                            Swal.fire('', res.msg, res.tipo);
                             if (res.estado) {
                                 calendar.refetchEvents();
                             }
