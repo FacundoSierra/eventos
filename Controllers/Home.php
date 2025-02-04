@@ -12,11 +12,15 @@ class Home extends Controller
     }
     public function registrar()
     {
-    if (!isset($_SESSION['usuario_id'])) {  // ✔ Verifica si el usuario está autenticado
-        echo json_encode(['msg' => 'Error: Usuario no autenticado', 'estado' => false, 'tipo' => 'danger']);
-        die();
-    }
-        if (isset($_POST)) {
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start(); // Iniciar sesión solo si no está activa
+        }
+    
+        if (!isset($_SESSION['usuario_id'])) {
+            echo json_encode(['error' => 'Usuario no autenticado']);
+            die(); // Termina la ejecución aquí
+        }
+    if (isset($_POST)) {
             if (empty($_POST['title']) || empty($_POST['start'])) {
             }else{
                 $usuario_id = $_SESSION['usuario_id'];
@@ -25,19 +29,20 @@ class Home extends Controller
                 $color = $_POST['color'];
                 $id = $_POST['id'];
                 if ($id == '') {
-
                     $data = $this->model->registrar($title, $start, $color, $usuario_id);
                     if ($data == 'ok') {
+                        $ultimoId = $this->model->getUltimoId(); // Obtén el ID del último registro
                         $msg = array('msg' => 'Evento Registrado', 'estado' => true, 'tipo' => 'success');
                     }else{
-                        $msg = array('msg' => 'Error al Registrar', 'estado' => false, 'tipo' => 'danger');
+                        $msg = array('msg' => 'Error al Registrar', 'estado' => false, 'tipo' => 'error');
+
                     }
                 } else {
                     $data = $this->model->modificar($title, $start, $color, $usuario_id);
                     if ($data == 'ok') {
                         $msg = array('msg' => 'Evento Modificado', 'estado' => true, 'tipo' => 'success');
                     } else {
-                        $msg = array('msg' => 'Error al Modificar', 'estado' => false, 'tipo' => 'danger');
+                        $msg = array('msg' => 'Error al Modificar', 'estado' => false, 'tipo' => 'error');
                     }
                 }
                 
@@ -48,10 +53,11 @@ class Home extends Controller
     }
     public function listar()
     {
-        $usuario_id = $_SESSION['usuario_id'];
-        $data = $this->model->getEventosPorUsuario($usuario_id);
+        $usuario_id = $_SESSION['usuario_id']; // Asegúrate de que $_SESSION['usuario_id'] esté configurado correctamente
+        $data = $this->model->getEventos($usuario_id); // Llama al método corregido
         echo json_encode($data);
     }
+    
     
     public function eliminar($id)
     {
@@ -59,7 +65,7 @@ class Home extends Controller
         if ($data == 'ok') {
             $msg = array('msg' => 'Evento Eliminado', 'estado' => true, 'tipo' => 'success');
         } else {
-            $msg = array('msg' => 'Error al Eliminar', 'estado' => false, 'tipo' => 'danger');
+            $msg = array('msg' => 'Error al Eliminar', 'estado' => false, 'tipo' => 'error');
         }
         echo json_encode($msg);
         die();
@@ -76,7 +82,7 @@ class Home extends Controller
                 if ($data == 'ok') {
                     $msg = array('msg' => 'Evento Modificado', 'estado' => true, 'tipo' => 'success');
                 } else {
-                    $msg = array('msg' => 'Error al Modificar', 'estado' => false, 'tipo' => 'danger');
+                    $msg = array('msg' => 'Error al Modificar', 'estado' => false, 'tipo' => 'error');
                 }
             }
             echo json_encode($msg);

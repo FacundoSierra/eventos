@@ -10,10 +10,20 @@
 </head>
 
 <body>
+    <!-- Barra de navegación con el botón de Cerrar Sesión -->
+    <nav class="navbar navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand">Eventos</a>
+            <form action="<?php echo base_url; ?>Auth/logout" method="POST">
+                <button type="submit" class="btn btn-danger">Cerrar Sesión</button>
+            </form>
+        </div>
+    </nav>
+
     <div class="container">
         <div id="calendar"></div>
     </div>
-    <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="Label" aria-hidden="true">
+    <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="Label" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-info">

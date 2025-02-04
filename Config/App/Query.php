@@ -23,7 +23,7 @@ class Query extends Conexion{
     {
         $this->sql = $sql;
         $resul = $this->con->prepare($this->sql);
-        $resul->execute();
+        $resul->execute($params);
         $data = $resul->fetchAll(PDO::FETCH_ASSOC);
         return $data;
     }
@@ -31,15 +31,24 @@ class Query extends Conexion{
     {
         $this->sql = $sql;
         $this->datos = $datos;
-        $insert = $this->con->prepare($this->sql);
-        $data = $insert->execute($this->datos);
-        if ($data) {
-            $res = 1;
-        }else{
-            $res = 0;
+        try {
+            $insert = $this->con->prepare($this->sql); // Preparar consulta
+            $data = $insert->execute($this->datos); // Ejecutar consulta
+    
+            if ($data) {
+                $res = 1; // Éxito en la ejecución
+            } else {
+                $res = 0; // Fallo en la ejecución
+            }
+        } catch (PDOException $e) {
+            // Registrar el error en los logs del servidor o mostrarlo en desarrollo
+            error_log("Error en consulta SQL: " . $e->getMessage()); // Registrar error
+            $res = 0; // Retornar fallo si ocurre una excepción
         }
-        return $res;
+    
+        return $res; // Retornar resultado
     }
+    
     public function insertar(string $sql, array $datos)
     {
         $this->sql = $sql;

@@ -9,42 +9,57 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let myModal = myModalEl ? new bootstrap.Modal(myModalEl) : null;
 
-    // Verifica si registerForm existe antes de asignar eventos
+    // Update aria-hidden based on modal visibility
+    if (myModalEl) {
+        myModalEl.addEventListener('show.bs.modal', function () {
+            myModalEl.removeAttribute('aria-hidden');
+        });
+
+        myModalEl.addEventListener('hide.bs.modal', function () {
+            myModalEl.setAttribute('aria-hidden', 'true');
+        });
+    }
+
+    // Register form submission
     if (registerForm) {
-        registerForm.addEventListener('submit', function(e) {
+        registerForm.addEventListener('submit', function (e) {
             e.preventDefault();
             fetch(base_url + 'Auth/register', {
                 method: 'POST',
-                body: new FormData(this)
-            }).then(res => res.json()).then(data => alert(data));
+                body: new FormData(this),
+            })
+                .then(res => res.json())
+                .then(data => alert(data));
         });
     }
 
-    // Verifica si loginForm existe antes de asignar eventos
+    // Login form submission
     if (loginForm) {
-        loginForm.addEventListener('submit', function(e) {
+        loginForm.addEventListener('submit', function (e) {
             e.preventDefault();
             fetch(base_url + 'Auth/login', {
                 method: 'POST',
-                body: new FormData(this)
-            }).then(res => res.json()).then(data => {
-                if (data.status === 'success') {
-                    location.reload();
-                } else {
-                    alert('Error en inicio de sesión');
-                }
-            });
+                body: new FormData(this),
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        location.reload();
+                    } else {
+                        alert('Error en inicio de sesión');
+                    }
+                });
         });
     }
 
-    // Verifica si logoutBtn existe antes de asignar evento
+    // Logout button click
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', function() {
+        logoutBtn.addEventListener('click', function () {
             window.location.href = base_url + 'Auth/logout';
         });
     }
 
-    // Verifica si el calendario existe antes de inicializarlo
+    // Initialize the calendar
     if (calendarEl) {
         let calendar = new FullCalendar.Calendar(calendarEl, {
             timeZone: 'local',
@@ -53,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
             headerToolbar: {
                 left: 'prev next today',
                 center: 'title',
-                right: 'dayGridMonth timeGridWeek listWeek'
+                right: 'dayGridMonth timeGridWeek listWeek',
             },
             events: base_url + 'Home/listar',
             editable: true,
@@ -85,14 +100,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 const id = info.event.id;
                 const url = base_url + 'Home/drag';
                 const http = new XMLHttpRequest();
-                const formDta = new FormData();
-                formDta.append('start', start);
-                formDta.append('id', id);
-                http.open("POST", url, true);
-                http.send(formDta);
+                const formData = new FormData();
+                formData.append('start', start);
+                formData.append('id', id);
+                http.open('POST', url, true);
+                http.send(formData);
                 http.onreadystatechange = function () {
                     if (this.readyState == 4 && this.status == 200) {
-                        console.log(this.responseText);
                         const res = JSON.parse(this.responseText);
                         Swal.fire('Avisos?', res.msg, res.tipo);
                         if (res.estado) {
@@ -100,72 +114,75 @@ document.addEventListener('DOMContentLoaded', function () {
                             calendar.refetchEvents();
                         }
                     }
-                }
-            }
+                };
+            },
         });
 
         calendar.render();
     }
 
-    // Verifica si frm existe antes de asignar evento
+    // Form submission for creating or modifying events
     if (frm) {
         frm.addEventListener('submit', function (e) {
             e.preventDefault();
             const title = document.getElementById('title').value;
             const start = document.getElementById('start').value;
-            if (title == '' || start == '') {
+            if (title === '' || start === '') {
                 Swal.fire('Avisos?', 'Todos los campos son obligatorios', 'warning');
             } else {
                 const url = base_url + 'Home/registrar';
                 const http = new XMLHttpRequest();
-                http.open("POST", url, true);
+                http.open('POST', url, true);
                 http.send(new FormData(frm));
                 http.onreadystatechange = function () {
                     if (this.readyState == 4 && this.status == 200) {
-                        console.log(this.responseText);
                         const res = JSON.parse(this.responseText);
-                        Swal.fire('Avisos?', res.msg, res.tipo);
+                        if (!res.estado) {
+                            Swal.fire('Error', 'No se pudo procesar la solicitud.', 'error');
+                        } else {
+                            Swal.fire('Avisos?', res.msg, res.tipo);
+                        }
                         if (res.estado) {
                             if (myModal) myModal.hide();
                             calendar.refetchEvents();
                         }
                     }
-                }
+                };
             }
         });
     }
 
-    // Verifica si eliminar existe antes de asignar evento
+    // Delete event functionality
     if (eliminar) {
         eliminar.addEventListener('click', function () {
             if (!myModal) return;
             myModal.hide();
             Swal.fire({
                 title: 'Advertencia?',
-                text: "¿Está seguro de eliminar?",
+                text: '¿Está seguro de eliminar?',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, eliminar'
-            }).then((result) => {
+                confirmButtonText: 'Sí, eliminar',
+            }).then(result => {
                 if (result.isConfirmed) {
                     const url = base_url + 'Home/eliminar/' + document.getElementById('id').value;
                     const http = new XMLHttpRequest();
-                    http.open("GET", url, true);
+                    http.open('GET', url, true);
                     http.send();
                     http.onreadystatechange = function () {
                         if (this.readyState == 4 && this.status == 200) {
-                            console.log(this.responseText);
                             const res = JSON.parse(this.responseText);
                             Swal.fire('Avisos?', res.msg, res.tipo);
                             if (res.estado) {
                                 calendar.refetchEvents();
                             }
                         }
-                    }
+                    };
                 }
-            })
+            });
         });
     }
 });
+
