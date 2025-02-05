@@ -1,3 +1,7 @@
+<?php
+// Verifica si la variable está definida antes de usarla
+$usuario = isset($_SESSION['usuario_nombre']) ? $_SESSION['usuario_nombre'] : 'Invitado';
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,7 +17,11 @@
     <!-- Barra de navegación con el botón de Cerrar Sesión -->
     <nav class="navbar navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand">Eventos</a>
+            <a class="navbar-brand">Calendario y Gestor de Eventos</a>
+            <span class="navbar-text text-primary fw-bold">
+            Bienvenido, <?php echo htmlspecialchars($usuario, ENT_QUOTES, 'UTF-8'); ?>, a tu calendario
+            </span>
+            
             <form action="<?php echo base_url; ?>Auth/logout" method="POST">
                 <button type="submit" class="btn btn-danger">Cerrar Sesión</button>
             </form>
