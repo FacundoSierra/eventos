@@ -19,7 +19,7 @@ $usuario = isset($_SESSION['usuario_nombre']) ? $_SESSION['usuario_nombre'] : 'I
         <div class="container-fluid">
             <a class="navbar-brand">Calendario y Gestor de Eventos</a>
             <span class="navbar-text text-primary fw-bold">
-            Bienvenido, <?php echo htmlspecialchars($usuario, ENT_QUOTES, 'UTF-8'); ?>, a tu calendario
+            Bienvenido <?php echo htmlspecialchars($usuario, ENT_QUOTES, 'UTF-8'); ?> a tu calendario
             </span>
             
             <form action="<?php echo base_url; ?>Auth/logout" method="POST">
@@ -68,6 +68,8 @@ $usuario = isset($_SESSION['usuario_nombre']) ? $_SESSION['usuario_nombre'] : 'I
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                         <button type="button" class="btn btn-danger" id="btnEliminar">Eliminar</button>
                         <button type="submit" class="btn btn-primary" id="btnAccion">Guardar</button>
+                        <button type="button" class="btn btn-success d-none" id="btnCompletar">Completar</button>
+                        <button id="btnReactivar" class="btn btn-warning d-none">Reactivar</button>
                     </div>
                 </form>
 

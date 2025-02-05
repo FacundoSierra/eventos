@@ -6,7 +6,8 @@ document.addEventListener('DOMContentLoaded', function () {
     let registerForm = document.getElementById('registerForm');
     let loginForm = document.getElementById('loginForm');
     let logoutBtn = document.getElementById('logoutBtn');
-
+    let btnCompletar = document.getElementById('btnCompletar');
+    let btnReactivar = document.getElementById('btnReactivar');
     let myModal = myModalEl ? new bootstrap.Modal(myModalEl) : null;
 
     // Update aria-hidden based on modal visibility
@@ -93,6 +94,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById('btnAccion').textContent = 'Modificar';
                 document.getElementById('titulo').textContent = 'Actualizar Evento';
                 if (eliminar) eliminar.classList.remove('d-none');
+                if (btnCompletar) {
+                    if (info.event.backgroundColor === '#6c757d') {
+                        document.getElementById('btnCompletar').classList.add('d-none');
+                        document.getElementById('btnReactivar').classList.remove('d-none');
+                    } else {
+                        document.getElementById('btnCompletar').classList.remove('d-none');
+                        document.getElementById('btnReactivar').classList.add('d-none');
+                    }
+                }
+
                 myModal.show();
             },
 
@@ -185,5 +196,44 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     }
+    if (btnCompletar) {
+        btnCompletar.addEventListener('click', function () {
+            const id = document.getElementById('id').value;
+            fetch(base_url + 'Home/completar/' + id)
+                .then(res => res.json())
+                .then(data => {
+                    Swal.fire('', data.msg, data.tipo);
+                    if (data.estado) {
+                   let event = calendar.getEventById(id);
+                    if (event) {
+                        event.setProp('backgroundColor', '#6c757d'); // Color gris apagado
+                        event.setProp('borderColor', '#6c757d'); // Borde gris apagado
+                    }
+                    if (myModal) myModal.hide();
+                    calendar.refetchEvents();
+                }
+                });
+        });
+    }
+    if (btnReactivar) {
+        btnReactivar.addEventListener('click', function () {
+            const id = document.getElementById('id').value;
+            fetch(base_url + 'Home/reactivar/' + id)
+                .then(res => res.json())
+                .then(data => {
+                    Swal.fire('', data.msg, data.tipo);
+                    if (data.estado) {
+                        let event = calendar.getEventById(id);
+                        if (event) {
+                            event.setProp('backgroundColor', event.extendedProps.color_original); // Restaurar color original
+                            event.setProp('borderColor', event.extendedProps.color_original);
+                        }
+                        if (myModal) myModal.hide();
+                        calendar.refetchEvents();
+                    }
+                });
+        });
+    }
+    
 });
 

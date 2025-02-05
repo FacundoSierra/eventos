@@ -7,8 +7,8 @@ class HomeModel extends Query{
 
     public function registrar($title, $inicio, $color,$usuario_id)
     {
-        $sql = "INSERT INTO evento (title, start , color, usuario_id) VALUES (?, ?, ?, ?)";
-        $array = array($title, $inicio, $color,$usuario_id);
+        $sql = "INSERT INTO evento (title, start, color, color_original, usuario_id) VALUES (?, ?, ?, ?, ?)";
+        $array = array($title, $inicio, $color,$color,$usuario_id);
         $data = $this->save($sql, $array);
         if ($data == 1) {
             $res = 'ok';
@@ -20,8 +20,13 @@ class HomeModel extends Query{
         return $res;
     }
     public function getEventos($usuario_id) {
-        $sql = "SELECT * FROM evento WHERE usuario_id = ?";
-        return $this->selectAll($sql, [$usuario_id]); // Corrige esta línea para pasar los parámetros
+        $sql = "SELECT id, title, start, 
+                    CASE 
+                        WHEN estado = 'completado' THEN '#6c757d'
+                        ELSE color_original  -- Restauramos el color original si está pendiente
+                    END AS color
+                FROM evento WHERE usuario_id = ?";
+        return $this->selectAll($sql, [$usuario_id]);
     }
     
     public function modificar($title, $inicio, $color, $id)
@@ -66,6 +71,18 @@ class HomeModel extends Query{
     $data = $this->select($sql);
     return $data['id'];
 }
+
+public function completarEvento($id) {
+    $sql = "UPDATE evento SET estado = 'completado', color = '#6c757d' WHERE id = ?";
+    return $this->save($sql, [$id]) ? 'ok' : 'error';
+}
+public function reactivarEvento($id) {
+    $sql = "UPDATE evento SET estado = 'pendiente', color = color_original WHERE id = ?";
+    return $this->save($sql, [$id]) ? 'ok' : 'error';
+}
+
+
+
 
 }
 

@@ -93,4 +93,23 @@ class Home extends Controller
         }
         die();
     }
+    public function completar($id) {
+        $data = $this->model->completarEvento($id);
+        $msg = $data == 'ok' ? 
+            ['msg' => 'Evento marcado como completado', 'estado' => true, 'tipo' => 'success'] :
+            ['msg' => 'Error al completar el evento', 'estado' => false, 'tipo' => 'error'];
+        
+        echo json_encode($msg);
+        die();
+    }
+    public function reactivar($id) {
+        $data = $this->model->reactivarEvento($id);
+        $msg = $data == 'ok' ? 
+            ['msg' => 'Evento reactivado con éxito', 'estado' => true, 'tipo' => 'success'] :
+            ['msg' => 'Error al reactivar el evento', 'estado' => false, 'tipo' => 'error'];
+        
+        echo json_encode($msg);
+        die();
+    }
+    
 }
