@@ -29,7 +29,8 @@ class Home extends Controller
             } else {
                 $usuario_id = $_SESSION['usuario_id'];
                 $title = $_POST['title'];
-                $start = $_POST['start'];
+                      // Asegurar el formato correcto de la fecha y hora
+                $start = date('Y-m-d H:i:s', strtotime($_POST['start']));
                 $color = $_POST['color'];
                 $id = $_POST['id'];
     
@@ -80,7 +81,8 @@ class Home extends Controller
             if (empty($_POST['id']) || empty($_POST['start'])) {
                 $msg = array('msg' => 'Todo los campos son requeridos', 'estado' => false, 'tipo' => 'danger');
             } else {
-                $start = $_POST['start'];
+                      // Asegurar el formato correcto de la fecha y hora
+                $start = date('Y-m-d H:i:s', strtotime($_POST['start']));
                 $id = $_POST['id'];
                 $data = $this->model->dragOver($start, $id);
                 if ($data == 'ok') {

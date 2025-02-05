@@ -66,10 +66,11 @@ document.addEventListener('DOMContentLoaded', function () {
             timeZone: 'local',
             initialView: 'dayGridMonth',
             locale: 'es',
+            slotDuration: '00:30:00', // Intervalo de media hora
             headerToolbar: {
                 left: 'prev next today',
                 center: 'title',
-                right: 'dayGridMonth timeGridWeek listWeek',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
             },
             events: base_url + 'Home/listar',
             editable: true,

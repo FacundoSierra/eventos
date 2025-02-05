@@ -51,8 +51,8 @@ $usuario = isset($_SESSION['usuario_nombre']) ? $_SESSION['usuario_nombre'] : 'I
                             </div>
                             <div class="col-md-12">
                                 <div class="form-floating mb-3">
-                                    <input class="form-control" id="start" type="date" name="start">
-                                    <label for="" class="form-label">Fecha</label>
+                                    <input class="form-control" id="start" type="datetime-local" name="start">
+                                    <label for="" class="form-label">Fecha y Hora</label>
                                 </div>
 
                             </div>
